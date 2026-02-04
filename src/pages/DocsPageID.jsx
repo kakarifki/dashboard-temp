@@ -233,6 +233,150 @@ export default function DocsPageID() {
                             </div>
                         </section>
 
+                        {/* CORS Section - Wajib! */}
+                        <section className="bg-white/5 dark:bg-[#1c1c27]/60 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-2xl shadow-2xl p-6 md:p-8">
+                            <div className="flex items-center gap-3 mb-4">
+                                <span className="material-symbols-outlined text-2xl text-orange-400">security</span>
+                                <h2 className="text-2xl font-bold text-white">Tantangan: CORS (Wajib Disetting!)</h2>
+                            </div>
+                            <div className="space-y-4 text-slate-300">
+                                <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl">
+                                    <div className="flex items-start gap-3">
+                                        <span className="material-symbols-outlined text-amber-400">warning</span>
+                                        <div>
+                                            <p className="font-semibold text-amber-400 mb-2">⚠️ Ini Penting Banget!</p>
+                                            <p className="text-sm">
+                                                Walaupun Node-RED dan browser kamu ada di laptop yang sama, bagi browser mereka adalah
+                                                dua <strong className="text-white">"Orang Asing"</strong> (Different Origin).
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p>
+                                    Contohnya:
+                                </p>
+                                <div className="p-4 bg-slate-800/50 rounded-xl space-y-2">
+                                    <div className="flex items-center gap-3">
+                                        <span className="material-symbols-outlined text-primary">language</span>
+                                        <code className="bg-slate-700 px-3 py-1 rounded text-sm">dashboard-sensor-temp.netlify.app</code>
+                                        <span className="text-slate-500">← Website</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <span className="material-symbols-outlined text-orange-400">developer_board</span>
+                                        <code className="bg-slate-700 px-3 py-1 rounded text-sm">localhost:1880</code>
+                                        <span className="text-slate-500">← Node-RED</span>
+                                    </div>
+                                </div>
+
+                                <p>
+                                    Browser akan <strong className="text-red-400">memblokir</strong> data JSON dari Node-RED agar tidak masuk
+                                    ke web Netlify kamu <strong className="text-white">kecuali</strong> Node-RED mengizinkannya.
+                                </p>
+
+                                <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+                                    <div className="flex items-start gap-3">
+                                        <span className="material-symbols-outlined text-emerald-400">build</span>
+                                        <div className="w-full">
+                                            <p className="font-semibold text-emerald-400 mb-3">✅ Cara Mengaktifkan CORS di Node-RED:</p>
+
+                                            <div className="space-y-4">
+                                                <div className="flex items-start gap-3">
+                                                    <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">1</div>
+                                                    <div>
+                                                        <p className="text-sm text-slate-300">
+                                                            Buka file <code className="bg-slate-700 px-2 py-0.5 rounded">settings.js</code> di folder Node-RED
+                                                        </p>
+                                                        <p className="text-xs text-slate-500 mt-1">
+                                                            Biasanya lokasinya di: <code className="bg-slate-700 px-2 py-0.5 rounded">~/.node-red/settings.js</code> (Linux/Mac)
+                                                            atau <code className="bg-slate-700 px-2 py-0.5 rounded">C:\Users\NamaKamu\.node-red\settings.js</code> (Windows)
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-start gap-3">
+                                                    <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
+                                                    <div className="w-full">
+                                                        <p className="text-sm text-slate-300 mb-2">
+                                                            Cari bagian <code className="bg-slate-700 px-2 py-0.5 rounded">httpNodeCors</code>, dan ubah/aktifkan menjadi:
+                                                        </p>
+                                                        <pre className="bg-[#15151e] p-4 rounded-lg text-sm overflow-x-auto">
+                                                            {`httpNodeCors: {
+    origin: "*",
+    methods: "GET,PUT,POST,DELETE"
+},`}
+                                                        </pre>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-start gap-3">
+                                                    <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
+                                                    <p className="text-sm text-slate-300">
+                                                        <strong>Restart Node-RED</strong> setelah menyimpan perubahan
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="p-4 bg-primary/10 border border-primary/30 rounded-xl">
+                                    <div className="flex items-start gap-3">
+                                        <span className="material-symbols-outlined text-primary">tips_and_updates</span>
+                                        <div>
+                                            <p className="font-semibold text-primary mb-2">💡 Penjelasan Sederhana:</p>
+                                            <p className="text-sm">
+                                                <code className="bg-slate-700 px-2 py-0.5 rounded">origin: "*"</code> artinya:
+                                                "Izinkan <strong className="text-white">siapa saja</strong> untuk mengakses data ini".
+                                                Kalau sudah di-set seperti ini, website Netlify kamu bisa mengambil data dari Node-RED.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* Browser Recommendation */}
+                        <section className="bg-white/5 dark:bg-[#1c1c27]/60 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-2xl shadow-2xl p-6 md:p-8">
+                            <div className="flex items-center gap-3 mb-4">
+                                <span className="material-symbols-outlined text-2xl text-blue-400">public</span>
+                                <h2 className="text-2xl font-bold text-white">Gunakan Google Chrome!</h2>
+                            </div>
+                            <div className="space-y-4 text-slate-300">
+                                <p>
+                                    Untuk hasil terbaik dan debugging yang lebih mudah, <strong className="text-white">gunakan browser Google Chrome</strong>.
+                                </p>
+
+                                <div className="flex items-center gap-4 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
+                                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 via-green-500 to-yellow-500 rounded-2xl flex items-center justify-center">
+                                        <span className="material-symbols-outlined text-3xl text-white">language</span>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-white">Google Chrome</h3>
+                                        <p className="text-sm text-slate-400">Browser yang direkomendasikan untuk menggunakan dashboard ini</p>
+                                    </div>
+                                </div>
+
+                                <p className="text-sm text-slate-400">
+                                    Kenapa Chrome?
+                                </p>
+                                <ul className="list-disc list-inside text-sm text-slate-400 space-y-1 ml-2">
+                                    <li>Developer Tools-nya lengkap (tekan F12 untuk membuka)</li>
+                                    <li>Tab "Network" berguna untuk melihat apakah API call berhasil atau gagal</li>
+                                    <li>Tab "Console" menampilkan error dengan jelas</li>
+                                    <li>Banyak tutorial debugging yang menggunakan Chrome</li>
+                                </ul>
+
+                                <div className="p-4 bg-slate-800/50 rounded-xl">
+                                    <p className="text-sm">
+                                        <strong className="text-primary">Pro Tip:</strong> Kalau ada error, buka Chrome → tekan <code className="bg-slate-700 px-2 py-0.5 rounded">F12</code> →
+                                        pilih tab <strong className="text-white">"Console"</strong> → lihat pesan error berwarna merah.
+                                        Itu akan membantu kamu tahu apa yang salah!
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+
                         {/* Glossary */}
                         <section className="bg-white/5 dark:bg-[#1c1c27]/60 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-2xl shadow-2xl p-6 md:p-8">
                             <div className="flex items-center gap-3 mb-4">
