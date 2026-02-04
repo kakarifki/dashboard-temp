@@ -79,6 +79,101 @@ The dashboard searches for values in this priority:
 { "value": 27.1 }
 ```
 
+## 🧪 Mock Sensor Tutorial (For Testing)
+
+Don't have a real IoT sensor? No problem! You can test this dashboard using **JSON Server** and a mock sensor script included in this repository.
+
+### Prerequisites
+
+```bash
+# Install JSON Server globally
+npm install -g json-server
+```
+
+### Files Included
+
+| File | Description |
+|------|-------------|
+| `db.json` | Database file that stores current sensor data |
+| `mock-sensor.cjs` | Node.js script that simulates temperature fluctuations |
+
+### How It Works
+
+1. **JSON Server** serves `db.json` as a REST API at `http://localhost:3001/sensor`
+2. **mock-sensor.cjs** updates `db.json` every 3 seconds with random temperature values
+3. **Dashboard** fetches data from JSON Server and displays it in real-time
+
+### Step-by-Step Setup
+
+**Terminal 1** - Start the Dashboard:
+```bash
+bun run dev
+```
+
+**Terminal 2** - Start JSON Server:
+```bash
+npx json-server db.json --port 3001
+```
+
+**Terminal 3** - Start Mock Sensor:
+```bash
+node mock-sensor.cjs
+```
+
+### Configure the Dashboard
+
+1. Open the dashboard at `http://localhost:5173`
+2. On the Setup page, enter:
+   - **API URL**: `http://localhost:3001/sensor`
+   - **Method**: GET
+   - **Interval**: 2000ms (or your preference)
+3. Click **Connect & Test**
+4. Watch the real-time temperature chart! 🎉
+
+### Mock Sensor Behavior
+
+The `mock-sensor.cjs` script simulates realistic temperature readings:
+
+```javascript
+// Temperature range: 20°C - 35°C
+// Random walk: changes ±1.5°C each update
+// Humidity: random 40-80%
+// Update interval: every 3 seconds
+```
+
+**Example output in db.json:**
+```json
+{
+  "sensor": {
+    "temperature": 28.5,
+    "humidity": 65,
+    "timestamp": "2026-02-05T01:55:00Z"
+  }
+}
+```
+
+### Architecture Diagram
+
+```
+┌─────────────────┐     writes      ┌──────────┐
+│ mock-sensor.cjs │ ──────────────► │ db.json  │
+└─────────────────┘   every 3s      └──────────┘
+                                          │
+                                          │ serves as API
+                                          ▼
+                                   ┌─────────────┐
+                                   │ JSON Server │
+                                   │  :3001      │
+                                   └─────────────┘
+                                          │
+                                          │ GET /sensor
+                                          ▼
+                                   ┌─────────────┐
+                                   │  Dashboard  │
+                                   │    :5173    │
+                                   └─────────────┘
+```
+
 ## 🏗️ Project Structure
 
 ```
