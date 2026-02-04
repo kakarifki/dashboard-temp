@@ -72,7 +72,7 @@ export default function DocsPage() {
                                 {[
                                     { icon: 'settings', title: 'Flexible API Configuration', desc: 'Enter any REST API URL, choose GET or POST method' },
                                     { icon: 'show_chart', title: 'Real-time Chart', desc: 'Live rolling line chart with smooth animations' },
-                                    { icon: 'timer', title: 'Configurable Polling', desc: 'Set your preferred refresh interval (500ms - 60s)' },
+                                    { icon: 'timer', title: 'Configurable Polling', desc: 'Set your preferred refresh interval (0.5s - 60s)' },
                                     { icon: 'terminal', title: 'Debug Console', desc: 'View API responses and errors in real-time' },
                                     { icon: 'save', title: 'Persistent Settings', desc: 'Configuration saved to localStorage' },
                                     { icon: 'thermostat', title: 'Temperature Stats', desc: 'Current, Min, Max, and Average readings' },
@@ -189,7 +189,7 @@ export default function DocsPage() {
                                 {[
                                     { step: 1, title: 'Configure Your API', desc: 'Go to the Setup page and enter your Node-RED API endpoint URL (e.g., http://localhost:1880/temperature)' },
                                     { step: 2, title: 'Select Method', desc: 'Choose GET or POST depending on your API configuration. Most simple APIs use GET.' },
-                                    { step: 3, title: 'Set Refresh Rate', desc: 'Configure how often the dashboard should fetch new data (default: 2000ms = 2 seconds)' },
+                                    { step: 3, title: 'Set Refresh Rate', desc: 'Configure how often the dashboard should fetch new data (default: 2 seconds)' },
                                     { step: 4, title: 'Test Connection', desc: 'Click "Connect & Test" to verify the connection. Check the debug console for response details.' },
                                     { step: 5, title: 'Monitor Data', desc: 'Once connected, you\'ll be redirected to the Dashboard where you can see real-time temperature charts!' },
                                 ].map((item) => (

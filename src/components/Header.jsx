@@ -33,7 +33,10 @@ export default function Header() {
         <header className="sticky top-0 z-50 glass-panel border-b border-surface-dark-lighter/50 px-6 py-4">
             <div className="mx-auto max-w-7xl flex items-center justify-between">
                 {/* Logo & Title */}
-                <div className="flex items-center gap-4">
+                <div
+                    className="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => navigate('/dashboard')}
+                >
                     <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-primary/20 text-primary">
                         <span className="material-symbols-outlined text-[24px]">hub</span>
                     </div>
@@ -78,8 +81,14 @@ export default function Header() {
 
                 {/* Theme toggle for setup page */}
                 {!isDashboard && (
-                    <button className="flex items-center justify-center size-10 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-500 dark:text-slate-400">
-                        <span className="material-symbols-outlined">light_mode</span>
+                    <button
+                        onClick={toggleTheme}
+                        className="flex items-center justify-center size-10 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-500 dark:text-slate-400"
+                        title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                    >
+                        <span className="material-symbols-outlined">
+                            {isDarkMode ? 'light_mode' : 'dark_mode'}
+                        </span>
                     </button>
                 )}
             </div>

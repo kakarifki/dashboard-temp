@@ -87,9 +87,11 @@ export function useIotData() {
             const value = extractValue(data)
             const timestamp = extractTimestamp(data)
 
-            // Update values
-            setPreviousValue(currentValue)
-            setCurrentValue(value)
+            // Update values using functional updates to avoid stale closure
+            setCurrentValue(prevCurrent => {
+                setPreviousValue(prevCurrent)
+                return value
+            })
 
             // Add to data points (max 50)
             if (value !== null) {
@@ -137,7 +139,7 @@ export function useIotData() {
         } finally {
             setIsLoading(false)
         }
-    }, [config.apiUrl, config.method, config.authToken, currentValue, addLog])
+    }, [config.apiUrl, config.method, config.authToken, addLog])
 
     // Test connection (single fetch)
     const testConnection = useCallback(async () => {

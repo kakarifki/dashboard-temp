@@ -11,7 +11,7 @@ export default function ConfigCard() {
     const [formData, setFormData] = useState({
         apiUrl: config.apiUrl || '',
         method: config.method || 'GET',
-        interval: config.interval || 2000,
+        interval: (config.interval || 2000) / 1000, // Convert ms to seconds for display
         authToken: config.authToken || '',
     })
     const [isLoading, setIsLoading] = useState(false)
@@ -21,7 +21,7 @@ export default function ConfigCard() {
         const { name, value } = e.target
         setFormData(prev => ({
             ...prev,
-            [name]: name === 'interval' ? parseInt(value) || 1000 : value
+            [name]: name === 'interval' ? Math.max(0.5, parseFloat(value) || 2) : value
         }))
     }
 
@@ -71,9 +71,10 @@ export default function ConfigCard() {
                 message: 'Connection successful!'
             })
 
-            // Save config
+            // Save config - convert interval from seconds to milliseconds
             setConfig({
                 ...formData,
+                interval: Math.round(formData.interval * 1000), // Convert seconds to ms
                 isConnected: true,
             })
 
@@ -171,7 +172,7 @@ export default function ConfigCard() {
                         {/* Refresh Interval Input */}
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                                Refresh Interval (ms)
+                                Refresh Interval (seconds)
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -182,9 +183,10 @@ export default function ConfigCard() {
                                     name="interval"
                                     value={formData.interval}
                                     onChange={handleChange}
-                                    min="500"
-                                    max="60000"
-                                    placeholder="2000"
+                                    min="0.5"
+                                    max="60"
+                                    step="0.5"
+                                    placeholder="2"
                                     className="w-full pl-10 pr-4 py-3 bg-white dark:bg-[#15151e] border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all shadow-sm"
                                 />
                             </div>

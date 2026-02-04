@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 
 const ConfigContext = createContext(null)
 
@@ -40,11 +40,11 @@ export function ConfigProvider({ children }) {
         }
     }, [config])
 
-    const setConfig = (updates) => {
+    const setConfig = useCallback((updates) => {
         setConfigState(prev => ({ ...prev, ...updates }))
-    }
+    }, [])
 
-    const addLog = (entry) => {
+    const addLog = useCallback((entry) => {
         const timestamp = new Date().toLocaleTimeString('en-US', {
             hour12: false,
             hour: '2-digit',
@@ -52,12 +52,12 @@ export function ConfigProvider({ children }) {
             second: '2-digit'
         })
         setLogs(prev => [...prev.slice(-99), { ...entry, timestamp }])
-    }
+    }, [])
 
-    const clearLogs = () => setLogs([])
+    const clearLogs = useCallback(() => setLogs([]), [])
 
-    const startMonitoring = () => setConfig({ isMonitoring: true })
-    const pauseMonitoring = () => setConfig({ isMonitoring: false })
+    const startMonitoring = useCallback(() => setConfigState(prev => ({ ...prev, isMonitoring: true })), [])
+    const pauseMonitoring = useCallback(() => setConfigState(prev => ({ ...prev, isMonitoring: false })), [])
 
     return (
         <ConfigContext.Provider value={{

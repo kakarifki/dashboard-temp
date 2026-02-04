@@ -69,7 +69,7 @@ export default function DashboardPage() {
                             title="System Status"
                             value={config.isMonitoring ? 'Active' : 'Paused'}
                             subtitle="Latency check passed"
-                            badge={`${config.interval}ms`}
+                            badge={`${(config.interval / 1000).toFixed(1)}s`}
                             badgeType="default"
                             icon="check_circle"
                             iconColor="text-emerald-500"
