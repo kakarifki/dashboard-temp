@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import axios from 'axios'
 import { useConfig } from '../context/ConfigContext'
 import ConsoleLog from './ConsoleLog'
@@ -216,8 +216,8 @@ export default function ConfigCard() {
                     {/* Test Result Message */}
                     {testResult && (
                         <div className={`p-3 rounded-lg text-sm ${testResult.success
-                                ? 'bg-emerald-400/10 text-emerald-400 border border-emerald-400/20'
-                                : 'bg-red-400/10 text-red-400 border border-red-400/20'
+                            ? 'bg-emerald-400/10 text-emerald-400 border border-emerald-400/20'
+                            : 'bg-red-400/10 text-red-400 border border-red-400/20'
                             }`}>
                             {testResult.message}
                         </div>
@@ -248,7 +248,7 @@ export default function ConfigCard() {
             </div>
 
             <p className="text-center text-slate-500 dark:text-slate-600 text-sm mt-6">
-                Need help? <a className="text-primary hover:underline" href="#">Read the documentation</a>
+                Need help? <Link className="text-primary hover:underline" to="/docs">Read the documentation</Link>
             </p>
         </div>
     )

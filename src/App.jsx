@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { ConfigProvider, useConfig } from './context/ConfigContext'
 import SetupPage from './pages/SetupPage'
 import DashboardPage from './pages/DashboardPage'
+import DocsPage from './pages/DocsPage'
+import DocsPageID from './pages/DocsPageID'
 
 function AppRoutes() {
     const { config } = useConfig()
@@ -18,6 +20,8 @@ function AppRoutes() {
             />
             <Route path="/setup" element={<SetupPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/docs" element={<DocsPage />} />
+            <Route path="/docs-id" element={<DocsPageID />} />
         </Routes>
     )
 }
