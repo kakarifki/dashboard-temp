@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useConfig } from '../context/ConfigContext'
 
@@ -7,6 +8,26 @@ export default function Header() {
     const { config, pauseMonitoring, startMonitoring } = useConfig()
 
     const isDashboard = location.pathname === '/dashboard'
+
+    // Theme state
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        const saved = localStorage.getItem('iot-dashboard-theme')
+        if (saved) return saved === 'dark'
+        return true // default to dark mode
+    })
+
+    // Apply theme on mount and when it changes
+    useEffect(() => {
+        if (isDarkMode) {
+            document.documentElement.classList.add('dark')
+            localStorage.setItem('iot-dashboard-theme', 'dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+            localStorage.setItem('iot-dashboard-theme', 'light')
+        }
+    }, [isDarkMode])
+
+    const toggleTheme = () => setIsDarkMode(prev => !prev)
 
     return (
         <header className="sticky top-0 z-50 glass-panel border-b border-surface-dark-lighter/50 px-6 py-4">
@@ -43,8 +64,8 @@ export default function Header() {
                         <button
                             onClick={() => config.isMonitoring ? pauseMonitoring() : startMonitoring()}
                             className={`flex h-10 items-center justify-center gap-2 rounded-lg transition-colors px-6 text-sm font-bold text-white shadow-lg ${config.isMonitoring
-                                    ? 'bg-primary hover:bg-primary/90 shadow-primary/20'
-                                    : 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-600/20'
+                                ? 'bg-primary hover:bg-primary/90 shadow-primary/20'
+                                : 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-600/20'
                                 }`}
                         >
                             <span className="material-symbols-outlined text-[18px]">
