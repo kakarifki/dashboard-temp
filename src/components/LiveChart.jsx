@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useState, useCallback } from 'react'
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -23,17 +23,64 @@ ChartJS.register(
 
 export default function LiveChart({ dataPoints = [], currentValue, pollingRate }) {
     const chartRef = useRef(null)
+    const containerRef = useRef(null)
+    const [isFullscreen, setIsFullscreen] = useState(false)
 
-    // Generate labels (time ago in seconds)
-    const labels = dataPoints.map((_, index) => {
-        const secondsAgo = (dataPoints.length - 1 - index) * (pollingRate / 1000)
-        return secondsAgo === 0 ? 'Now' : `-${secondsAgo}s`
+    // Generate labels from actual timestamps
+    const labels = dataPoints.map((point) => {
+        const date = new Date(point.timestamp)
+        return date.toLocaleTimeString('en-GB', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        })
     })
+
+    // Download chart as PNG
+    const handleDownload = useCallback(() => {
+        if (chartRef.current) {
+            const chart = chartRef.current
+            const url = chart.toBase64Image('image/png', 1.0)
+            const link = document.createElement('a')
+            link.download = `telemetry-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.png`
+            link.href = url
+            link.click()
+        }
+    }, [])
+
+    // Toggle fullscreen
+    const handleFullscreen = useCallback(() => {
+        if (!containerRef.current) return
+
+        if (!document.fullscreenElement) {
+            containerRef.current.requestFullscreen().then(() => {
+                setIsFullscreen(true)
+            }).catch(err => {
+                console.error('Fullscreen error:', err)
+            })
+        } else {
+            document.exitFullscreen().then(() => {
+                setIsFullscreen(false)
+            })
+        }
+    }, [])
+
+    // Listen for fullscreen change
+    const handleFullscreenChange = useCallback(() => {
+        setIsFullscreen(!!document.fullscreenElement)
+    }, [])
+
+    // Add event listener for fullscreen change
+    if (typeof document !== 'undefined') {
+        document.addEventListener('fullscreenchange', handleFullscreenChange)
+    }
 
     const data = {
         labels,
         datasets: [
             {
+                label: 'Temperature',
                 data: dataPoints.map(d => d.value),
                 fill: true,
                 backgroundColor: (context) => {
@@ -79,23 +126,70 @@ export default function LiveChart({ dataPoints = [], currentValue, pollingRate }
                 padding: 12,
                 displayColors: false,
                 callbacks: {
-                    label: (context) => `Value: ${context.raw?.toFixed(1) || 'N/A'}`,
+                    label: (context) => `Temperature: ${context.raw?.toFixed(1) || 'N/A'}°C`,
                 },
             },
         },
         scales: {
             x: {
-                display: false,
+                display: true,
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.05)',
+                    drawBorder: false,
+                },
+                ticks: {
+                    color: '#64748b',
+                    font: {
+                        size: 11,
+                    },
+                    maxRotation: 0,
+                    autoSkip: true,
+                    maxTicksLimit: 8,
+                },
+                title: {
+                    display: true,
+                    text: 'Time',
+                    color: '#94a3b8',
+                    font: {
+                        size: 12,
+                        weight: 'bold',
+                    },
+                    padding: { top: 8 },
+                },
             },
             y: {
-                display: false,
+                display: true,
                 beginAtZero: false,
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.05)',
+                    drawBorder: false,
+                },
+                ticks: {
+                    color: '#64748b',
+                    font: {
+                        size: 11,
+                    },
+                    callback: (value) => `${value}°`,
+                },
+                title: {
+                    display: true,
+                    text: 'Temperature (°C)',
+                    color: '#94a3b8',
+                    font: {
+                        size: 12,
+                        weight: 'bold',
+                    },
+                    padding: { bottom: 8 },
+                },
             },
         },
     }
 
     return (
-        <div className="glass-panel rounded-2xl p-6 flex flex-col gap-4">
+        <div
+            ref={containerRef}
+            className={`glass-panel rounded-2xl p-6 flex flex-col gap-4 ${isFullscreen ? 'bg-[#0f0f17] fixed inset-0 z-50 rounded-none' : ''}`}
+        >
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
@@ -108,17 +202,27 @@ export default function LiveChart({ dataPoints = [], currentValue, pollingRate }
                     </p>
                 </div>
                 <div className="flex gap-2">
-                    <button className="p-2 rounded hover:bg-white/5 text-slate-400 hover:text-white transition-colors">
-                        <span className="material-symbols-outlined">zoom_out_map</span>
+                    <button
+                        onClick={handleFullscreen}
+                        className="p-2 rounded hover:bg-white/5 text-slate-400 hover:text-white transition-colors"
+                        title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+                    >
+                        <span className="material-symbols-outlined">
+                            {isFullscreen ? 'fullscreen_exit' : 'zoom_out_map'}
+                        </span>
                     </button>
-                    <button className="p-2 rounded hover:bg-white/5 text-slate-400 hover:text-white transition-colors">
+                    <button
+                        onClick={handleDownload}
+                        className="p-2 rounded hover:bg-white/5 text-slate-400 hover:text-white transition-colors"
+                        title="Download as PNG"
+                    >
                         <span className="material-symbols-outlined">download</span>
                     </button>
                 </div>
             </div>
 
             {/* Chart Container */}
-            <div className="relative h-[300px] w-full bg-slate-900/50 rounded-xl border border-white/5 overflow-hidden">
+            <div className={`relative w-full bg-slate-900/50 rounded-xl border border-white/5 overflow-hidden ${isFullscreen ? 'flex-1' : 'h-[300px]'}`}>
                 {dataPoints.length > 0 ? (
                     <>
                         <Line ref={chartRef} data={data} options={options} />
@@ -140,19 +244,7 @@ export default function LiveChart({ dataPoints = [], currentValue, pollingRate }
                     </div>
                 )}
             </div>
-
-            {/* X Axis Labels */}
-            {dataPoints.length > 0 && (
-                <div className="flex justify-between px-2 text-xs text-slate-500 font-mono">
-                    <span>-60s</span>
-                    <span>-50s</span>
-                    <span>-40s</span>
-                    <span>-30s</span>
-                    <span>-20s</span>
-                    <span>-10s</span>
-                    <span>Now</span>
-                </div>
-            )}
         </div>
     )
 }
+
